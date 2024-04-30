@@ -42,12 +42,12 @@ for sheet_name in xlsx.sheet_names:
             data[mapped_name] = np.zeros(df.shape[0])  # 열이 없다면 0으로 채워진 배열 생성
 
     # 필요한 변수 데이터 로드 (.mat 파일에서)
-    variables_needed = ['LE', 'H', 'ea', 'es']
+    variables_needed = ['LEsc', 'H', 'ea', 'es']
     for var in variables_needed:
         data[var] = mat_data[var].squeeze() if var in mat_data else np.zeros(df.shape[0])
 
     # 공통 차원 확인 및 조정
-    common_length = min(len(data['LE']), df.shape[0], *(len(data[col]) for col in column_mappings.values()))
+    common_length = min(len(data['LEsc']), df.shape[0], *(len(data[col]) for col in column_mappings.values()))
     for key in data.keys():
         data[key] = data[key][:common_length]
 
@@ -58,13 +58,13 @@ for sheet_name in xlsx.sheet_names:
         replace = np.ones(df.shape[0], dtype=int)  # 'replace' 열이 없으면 모든 값에 대해 보정 적용
 
     # LE 데이터 보정 계산
-    LE_cor = np.where(replace == 0, data['LE'], data['LE'] * 1.061 + 6.3259)
+    LE_cor = np.where(replace == 0, data['LEsc'], data['LEsc'] * 1.061 + 6.3259)
 
     # 추가 필요한 계산 변수
     lambda_ = 2501 - 2.37 * data['T_AIR']
     T_atm = (data['RLDN'] / (5.67e-8) / 0.85)**0.25
     T_air = data['T_AIR'] + 273.15  # assuming T_AIR is in Celsius and needs conversion to Kelvin
-    T_surf = ((data['RLUP'] - ((1 - 0.99) * data['RLDN'])) / (5.67e-8) / 0.99)**0.25
+    T_surf = (data['RLUP'] / (5.67e-8) / 0.98)**0.25
 
     # 결과 DataFrame 생성
     results = pd.DataFrame({
@@ -94,9 +94,8 @@ for sheet_name in xlsx.sheet_names:
         'J_Rl_net': (data['RLDN'] / T_atm) + (-data['RLUP'] / T_surf),
         'J_H': -data['H'] / T_air,
         'J_LE': -LE_cor / T_air,
-        'J_G': -df[['G_0.1m(1)', 'G_0.1m(2)']].mean(axis=1) / (df[['Ts_0.1m(1)', 'Ts_0.1m(2)']].mean(axis=1) + 1e-10),
-        'J_B': -df[['Ta_1m', 'Ta_3m', 'Ta_10m', 'Ta_15m']].mean(axis=1) * 0.1 / (
-                    df[['Ta_1m', 'Ta_3m', 'Ta_10m', 'Ta_15m']].mean(axis=1) + 1e-10),
+        'J_G': -df[['G_0.1m(1)', 'G_0.1m(2)']].mean(axis=1) / df[['Ts_0.1m(1)', 'Ts_0.1m(2)']].mean(axis=1),
+        'J_B': -df[['Ta_1m', 'Ta_3m', 'Ta_10m', 'Ta_15m']].mean(axis=1) * 0.1 / df[['Ta_1m', 'Ta_3m', 'Ta_10m', 'Ta_15m']].mean(axis=1),
         #0 되는거 방지하기 위해
         #'J_G': -df[['G_0.1m(1)', 'G_0.1m(2)']].mean(axis=1) / df[['Ts_0.1m(1)', 'Ts_0.1m(2)']].mean(axis=1),
         #'J_B': -df[['Ta_1m', 'Ta_3m', 'Ta_10m', 'Ta_15m']].mean(axis=1) * 0.1 / df[['Ta_1m', 'Ta_3m', 'Ta_10m', 'Ta_15m']].mean(axis=1),
