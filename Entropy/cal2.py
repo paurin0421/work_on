@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 # 설정
 year = 2006
-dir_path = 'E:/Matlab/work_on/Entropy'  # 절대 경로 사용
+dir_path = '/Users/paurin/PycharmProjects/entropy Web/Entropy'  # 절대 경로 사용
 
 # 파일 로드: ExcelFile 객체 사용하여 모든 시트에 접근 가능하게 설정
 xlsx = pd.ExcelFile(f'{dir_path}/{year}/GDK_FNL_{year}_GF.xls')

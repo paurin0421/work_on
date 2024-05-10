@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Plot</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Plot</h1>
+    {% for plot_data in plot_data_list %}
+        <h2>{{ plot_data.filename }}</h2>
+        <form class="column-form">
+            {% for column in plot_data.data.keys() %}
+                {% if column != 'Timestamp' %}
+                    <input type="checkbox" name="columns" value="{{ column }}"> {{ column }}<br>
+                {% endif %}
+            {% endfor %}
+            <br>
+            <input type="button" value="Select All" onclick="selectAll(this)">
+            <input type="button" value="Deselect All" onclick="deselectAll(this)">
+        </form>
+        <br>
+    {% endfor %}
+    <input type="button" value="Update Plot" onclick="updatePlot()">
+    <br><br>
+    <canvas id="plot-canvas"></canvas>
+
+    <script>
+        var plotDataList = {{ plot_data_list|tojson }};
+        var chart = null;
+
+        function selectAll(button) {
+            var form = button.parentNode;
+            var checkboxes = form.getElementsByTagName('input');
+            for (var i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].type == 'checkbox') {
+                    checkboxes[i].checked = true;
+                }
+            }
+        }
+
+        function deselectAll(button) {
+            var form = button.parentNode;
+            var checkboxes = form.getElementsByTagName('input');
+            for (var i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].type == 'checkbox') {
+                    checkboxes[i].checked = false;
+                }
+            }
+        }
+
+        function updatePlot() {
+            var selectedColumns = [];
+            var datasets = [];
+            var forms = document.getElementsByClassName('column-form');
+
+            for (var i = 0; i < forms.length; i++) {
+                var form = forms[i];
+                var columns = [];
+                var checkboxes = form.getElementsByTagName('input');
+                for (var j = 0; j < checkboxes.length; j++) {
+                    if (checkboxes[j].type == 'checkbox' && checkboxes[j].checked) {
+                        columns.push(checkboxes[j].value);
+                    }
+                }
+                selectedColumns.push(columns);
+
+                columns.forEach(function(column) {
+                    datasets.push({
+                        label: plotDataList[i].filename + '_' + column,
+                        data: plotDataList[i].data[column]
+                    });
+                });
+            }
+
+            var ctx = document.getElementById('plot-canvas').getContext('2d');
+            if (chart) {
+                chart.destroy();
+            }
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: plotDataList[0].data.Timestamp,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true
+                }
+            });
+        }
+    </script>
+</body>
+</html>

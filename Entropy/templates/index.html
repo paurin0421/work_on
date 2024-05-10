@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSV File Plotter</title>
+</head>
+<body>
+    <h1>CSV File Plotter</h1>
+    <form action="/plot" method="POST">
+        <label for="csv_files">Select CSV files:</label><br>
+        {% for file in csv_files %}
+            <input type="checkbox" name="csv_files" value="{{ file }}"> {{ file }}<br>
+        {% endfor %}
+        <br>
+        <input type="submit" value="Plot">
+    </form>
+</body>
+</html>
