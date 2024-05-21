@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>CSV File Plotter</title>
+    <title>Agricultural Ecosystem Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <h1>CSV File Plotter</h1>
-    <form action="/plot" method="POST">
-        <label for="csv_files">Select CSV files:</label><br>
-        {% for file in csv_files %}
-            <input type="checkbox" name="csv_files" value="{{ file }}"> {{ file }}<br>
-        {% endfor %}
-        <br>
-        <input type="submit" value="Plot">
+    <h1>Agricultural Ecosystem Dashboard</h1>
+    <form action="/data" method="POST">
+        <label for="start_date">Start Date:</label>
+        <input type="date" id="start_date" name="start_date" required>
+        <label for="end_date">End Date:</label>
+        <input type="date" id="end_date" name="end_date" required>
+        <button type="submit">Update Data</button>
     </form>
 </body>
 </html>

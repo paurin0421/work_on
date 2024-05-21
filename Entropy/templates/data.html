@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Agricultural Ecosystem Data</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Agricultural Ecosystem Data</h1>
+    <div class="graph">
+        <h2>Temperature</h2>
+        {{ graph_temp|safe }}
+    </div>
+    <div class="graph">
+        <h2>Energy Fluxes</h2>
+        {{ graph_flux|safe }}
+    </div>
+    <div class="graph">
+        <h2>Entropy</h2>
+        {{ graph_entropy|safe }}
+    </div>
+    <div class="table">
+        <h2>30-minute Data</h2>
+        {{ data_30min|safe }}
+    </div>
+    <div class="table">
+        <h2>Daily Data</h2>
+        {{ data_daily|safe }}
+    </div>
+    <a href="/">Back to Home</a>
+</body>
+</html>
