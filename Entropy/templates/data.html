@@ -18,9 +18,17 @@
         <h2>Entropy</h2>
         {{ graph_entropy|safe }}
     </div>
-    <div class="table">
-        <h2>30-minute Data</h2>
-        {{ data_30min|safe }}
+    <div class="graph">
+        <h2>Absolute Difference between Sigma and Entropy</h2>
+        {{ graph_abs_diff|safe }}
+    </div>
+    <div class="graph">
+        <h2>Cumulative Difference between Sigma and Entropy</h2>
+        {{ graph_cum_diff|safe }}
+    </div>
+    <div class="graph">
+        <h2>Entropy Ratio (Sigma/Entropy)</h2>
+        {{ graph_entropy_ratio|safe }}
     </div>
     <div class="table">
         <h2>Daily Data</h2>
